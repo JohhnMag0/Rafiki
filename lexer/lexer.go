@@ -1,6 +1,6 @@
 package lexer
 
-import "../token"
+import "github.com/JohhnMag0/Rafiki/token"
 
 type Lexer struct {
 	input        string
@@ -131,7 +131,7 @@ func (lex *Lexer) NextToken() token.Token {
 		tok = newToken(token.RPAREN, lex.ch)
 	case 0:
 		tok.Literal = ""
-		tok = newToken(token.EOF, lex.ch)
+		tok.Type = token.EOF
 	default:
 		if isLetter(lex.ch) {
 			tok.Literal = lex.readIdentifier()

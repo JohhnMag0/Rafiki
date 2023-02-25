@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/user"
 
-	"./repl"
+	"github.com/JohhnMag0/Rafiki/repl"
 )
 
 func main() {
@@ -14,6 +14,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Rafiki Interpreter [%s]", user.Username)
+	fmt.Printf("Rafiki Interpreter [%s]\n", user.Username)
 	repl.Start(os.Stdin, os.Stdout)
 }

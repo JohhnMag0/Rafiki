@@ -46,8 +46,8 @@ type Parser struct {
 	curToken  token.Token
 	peekToken token.Token
 
-	prefixParseFn map[token.TokenType]prefixParseFn
-	infixParseFn  map[token.TokenType]infixParseFn
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
 }
 
 func New(lex *lexer.Lexer) *Parser {
@@ -56,7 +56,7 @@ func New(lex *lexer.Lexer) *Parser {
 		errors: []string{},
 	}
 
-	prs.prefixParseFn = make(map[token.TokenType]prefixParseFn)
+	prs.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	prs.registerPrefix(token.IDENT, prs.parseIdentifier)
 	prs.registerPrefix(token.INT, prs.parseIntegerLiteral)
 	prs.registerPrefix(token.NOT, prs.parsePrefixExpression)
@@ -67,7 +67,7 @@ func New(lex *lexer.Lexer) *Parser {
 	prs.registerPrefix(token.IF, prs.parseIfExpression)
 	prs.registerPrefix(token.FUNCTION, prs.parseFunctionLiteral)
 
-	prs.infixParseFn = make(map[token.TokenType]infixParseFn)
+	prs.infixParseFns = make(map[token.TokenType]infixParseFn)
 	prs.registerInfix(token.PLUS, prs.parseInfixExpression)
 	prs.registerInfix(token.MINUS, prs.parseInfixExpression)
 	prs.registerInfix(token.DIV, prs.parseInfixExpression)
@@ -202,7 +202,7 @@ func (prs *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 }
 
 func (prs *Parser) parseExpression(precedence int) ast.Expression {
-	prefix := prs.prefixParseFn[prs.curToken.Type]
+	prefix := prs.prefixParseFns[prs.curToken.Type]
 	if prefix == nil {
 		prs.noPrefixParseFnError(prs.curToken.Type)
 		return nil
@@ -210,7 +210,7 @@ func (prs *Parser) parseExpression(precedence int) ast.Expression {
 	leftExp := prefix()
 
 	for !prs.peekTokenIs(token.SEMICOLON) && precedence < prs.peekPrecedence() {
-		infix := prs.infixParseFn[prs.peekToken.Type]
+		infix := prs.infixParseFns[prs.peekToken.Type]
 		if infix == nil {
 			return leftExp
 		}
@@ -419,9 +419,9 @@ func (prs *Parser) parseCallArguments() []ast.Expression {
 }
 
 func (prs *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
-	prs.prefixParseFn[tokenType] = fn
+	prs.prefixParseFns[tokenType] = fn
 }
 
 func (prs *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
-	prs.infixParseFn[tokenType] = fn
+	prs.infixParseFns[tokenType] = fn
 }

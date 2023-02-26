@@ -63,6 +63,17 @@ func (lex *Lexer) readNumber() string {
 	return lex.input[position:lex.position]
 }
 
+func (lex *Lexer) readString() string {
+	position := lex.position + 1
+	for {
+		lex.readChar()
+		if lex.ch == '"' || lex.ch == 0 {
+			break
+		}
+	}
+	return lex.input[position:lex.position]
+}
+
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
@@ -121,6 +132,8 @@ func (lex *Lexer) NextToken() token.Token {
 		tok = newToken(token.SEMICOLON, lex.ch)
 	case ',':
 		tok = newToken(token.COMMA, lex.ch)
+	case ':':
+		tok = newToken(token.COLON, lex.ch)
 	case '{':
 		tok = newToken(token.LANGBRACK, lex.ch)
 	case '}':
@@ -129,6 +142,13 @@ func (lex *Lexer) NextToken() token.Token {
 		tok = newToken(token.LPAREN, lex.ch)
 	case ')':
 		tok = newToken(token.RPAREN, lex.ch)
+	case '"':
+		tok.Type = token.STRING
+		tok.Literal = lex.readString()
+	case '[':
+		tok = newToken(token.LBRACK, lex.ch)
+	case ']':
+		tok = newToken(token.RBRACK, lex.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF

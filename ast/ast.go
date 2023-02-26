@@ -109,8 +109,8 @@ func (exp *ExpressionStatement) String() string {
 }
 
 type BlockStatement struct {
-	Token     token.Token // {
-	Statement []Statement
+	Token      token.Token // {
+	Statements []Statement
 }
 
 func (blk *BlockStatement) statementNode()       {}
@@ -118,7 +118,7 @@ func (blk *BlockStatement) TokenLiteral() string { return blk.Token.Literal }
 func (blk *BlockStatement) String() string {
 	var out bytes.Buffer
 
-	for _, stmt := range blk.Statement {
+	for _, stmt := range blk.Statements {
 		out.WriteString(stmt.String())
 	}
 

@@ -266,3 +266,75 @@ func (calexp *CallExpression) String() string {
 
 	return out.String()
 }
+
+type StringLiteral struct {
+	Token token.Token
+	Value string
+}
+
+func (strl *StringLiteral) expressionNode()      {}
+func (strl *StringLiteral) TokenLiteral() string { return strl.Token.Literal }
+func (strl *StringLiteral) String() string       { return strl.Token.Literal }
+
+type ArrayLiteral struct {
+	Token    token.Token // '['
+	Elements []Expression
+}
+
+func (arr *ArrayLiteral) expressionNode()      {}
+func (arr *ArrayLiteral) TokenLiteral() string { return arr.Token.Literal }
+func (arr *ArrayLiteral) String() string {
+	var out bytes.Buffer
+
+	elements := []string{}
+	for _, el := range arr.Elements {
+		elements = append(elements, el.String())
+	}
+
+	out.WriteString("[")
+	out.WriteString(strings.Join(elements, ", "))
+	out.WriteString("]")
+
+	return out.String()
+}
+
+type IndexExpression struct {
+	Token token.Token // '['
+	Left  Expression
+	Index Expression
+}
+
+func (indexp *IndexExpression) expressionNode()      {}
+func (indexp *IndexExpression) TokenLiteral() string { return indexp.Token.Literal }
+func (indexp *IndexExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(indexp.Left.String())
+	out.WriteString(indexp.Index.String())
+	out.WriteString("])")
+
+	return out.String()
+}
+
+type HashLiteral struct {
+	Token token.Token // '{'
+	Pairs map[Expression]Expression
+}
+
+func (hash *HashLiteral) expressionNode()      {}
+func (hash *HashLiteral) TokenLiteral() string { return hash.Token.Literal }
+func (hash *HashLiteral) String() string {
+	var out bytes.Buffer
+
+	pairs := []string{}
+	for key, value := range hash.Pairs {
+		pairs = append(pairs, key.String()+":"+value.String())
+	}
+
+	out.WriteString("{")
+	out.WriteString(strings.Join(pairs, ", "))
+	out.WriteString("}")
+
+	return out.String()
+}

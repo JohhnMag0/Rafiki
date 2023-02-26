@@ -122,9 +122,9 @@ func (lex *Lexer) NextToken() token.Token {
 	case ',':
 		tok = newToken(token.COMMA, lex.ch)
 	case '{':
-		tok = newToken(token.LBRACK, lex.ch)
+		tok = newToken(token.LANGBRACK, lex.ch)
 	case '}':
-		tok = newToken(token.RBRACK, lex.ch)
+		tok = newToken(token.RANGBRACK, lex.ch)
 	case '(':
 		tok = newToken(token.LPAREN, lex.ch)
 	case ')':
